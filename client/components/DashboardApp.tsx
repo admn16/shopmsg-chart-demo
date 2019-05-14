@@ -7,7 +7,8 @@ import {
   Icon,
   Card
 } from 'antd';
-import InputForm from './InputForm'
+import InputForm from './InputForm';
+import Chart from './Chart';
 
 const {
   Header,
@@ -76,8 +77,12 @@ export default class DashboardApp extends React.Component <{}> {
               <Breadcrumb.Item>Reports</Breadcrumb.Item>
               <Breadcrumb.Item>Message Receipts & Optins</Breadcrumb.Item>
             </Breadcrumb>
-            <Card>
+            <Card style={styles.cardInputForm}>
               <InputForm/>
+            </Card>
+
+            <Card>
+              <Chart/>
             </Card>
           </Content>
           <Footer style={{ textAlign: 'center' }}>ShopMessage ©2018</Footer>
@@ -90,6 +95,9 @@ export default class DashboardApp extends React.Component <{}> {
 const styles = {
   breadcrumb: {
     margin: '16px 0'
+  },
+  cardInputForm: {
+    margin: '0 0 10px'
   },
   content: {
     margin: '0 16px'
