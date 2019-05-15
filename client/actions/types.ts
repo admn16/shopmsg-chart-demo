@@ -1,0 +1,5 @@
+export const OPTINS_FETCH: string = 'OPTINS_FETCH'
+export const OPTINS_FETCH_SUCCESS: string = 'OPTINS_FETCH_SUCCESS'
+
+export const RECIPIENTS_FETCH: string = 'RECIPIENTS_FETCH'
+export const RECIPIENTS_FETCH_SUCCESS: string = 'RECIPIENTS_FETCH_SUCCESS'
