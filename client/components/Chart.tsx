@@ -43,7 +43,7 @@ const Chart = (props: IChartProps) => {
     && !props.isFetchingData;
 
   return (
-    <Spin size="large" spinning={props.isFetchingData}>
+    <Spin spinning={props.isFetchingData}>
       {
         showChart && (
           <Card>
