@@ -46,7 +46,7 @@ const InputForm = (props: IInputFormProps) => {
           onChange={val => props.onSwitchChange('showRecipients', val)}
         />
     },
-  ]
+  ];
 
   return (
     <Card style={styles.card}>

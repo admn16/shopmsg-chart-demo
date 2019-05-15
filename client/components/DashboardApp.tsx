@@ -13,7 +13,7 @@ import {
   optinsFetch,
   optinsRecipientsEmpty,
   recipientsFetch
-} from '../actions/index'
+} from '../actions/index';
 
 const {
   Header,

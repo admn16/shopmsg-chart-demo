@@ -27,20 +27,20 @@ const Chart = (props: IChartProps) => {
     recipients,
     showOptins,
     showRecipients
-  } = props
+  } = props;
 
-  const dataNames = (optins || recipients).map(item => ({ name: item.date }))
+  const dataNames = (optins || recipients).map(item => ({ name: item.date }));
 
   const data = dataNames.map((name, i) => ({
     ...name,
     ...(optins && optins[i] && { optin: optins[i].count }),
-    ...(recipients && recipients[i] && { recipient: recipients[i].count }),
+    ...(recipients && recipients[i] && { recipient: recipients[i].count })
   }));
 
   const showChart = data.length > 0 && (showOptins || showRecipients)
   const hasNoResults = props.dateRange.length > 0
     && data.length === 0
-    && !props.isFetchingData
+    && !props.isFetchingData;
 
   return (
     <Spin size="large" spinning={props.isFetchingData}>
@@ -77,7 +77,7 @@ const Chart = (props: IChartProps) => {
 const colors = {
   blue: '#36a2eb',
   red: '#ff6384'
-}
+};
 
 const mapStateToProps = state => ({
   isFetchingData: state.isFetchingData,

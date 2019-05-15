@@ -20,7 +20,7 @@ const defaultState: IState = {
   optins: [],
   recipients: [],
   isFetchingData: false
-}
+};
 
 export default function(state = defaultState, action: IAction) {
   switch(action.type) {
@@ -50,6 +50,6 @@ export default function(state = defaultState, action: IAction) {
       };
 
     default:
-      return state
+      return state;
   }
 }
