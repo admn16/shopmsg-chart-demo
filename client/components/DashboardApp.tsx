@@ -1,14 +1,19 @@
 "use strict";
 import * as React from 'react';
+import { connect } from 'react-redux';
 import {
   Layout,
   Menu,
   Breadcrumb,
-  Icon,
-  Card
+  Icon
 } from 'antd';
 import InputForm from './InputForm';
 import Chart from './Chart';
+import {
+  optinsFetch,
+  optinsRecipientsEmpty,
+  recipientsFetch
+} from '../actions/index'
 
 const {
   Header,
@@ -18,18 +23,69 @@ const {
 } = Layout;
 const SubMenu = Menu.SubMenu;
 
+type TSwitchNames = 'showOptins' | 'showRecipients'
+
+interface IDashboardAppProps {
+  fetchOptins(object): void,
+  fetchRecipients(object): void,
+  emptyOptinsRecipients(): void
+}
+
+interface IDashboardAppState {
+  collapsed: boolean,
+  dateRange: any[],
+  showOptins: boolean,
+  showRecipients: boolean
+}
+
 require('antd/dist/antd.less');
-export default class DashboardApp extends React.Component <{}> {
+class DashboardApp extends React.Component <IDashboardAppProps, IDashboardAppState> {
   state = {
     collapsed: false,
+    dateRange: [],
+    showOptins: true,
+    showRecipients: true
   };
 
   onCollapse = (collapsed: boolean) => {
-    console.log(collapsed);
     this.setState({ collapsed });
   }
 
+  onDateChange = (dateMoment: [any?, any?]) => {
+    this.setState({ dateRange: dateMoment }, () => {
+      const dateFormat: string = 'YYYY-MM-DD';
+
+      let [start, end]: [any?, any?] = dateMoment;
+
+      if (start && end) {
+        start = start.format(dateFormat);
+        end = end.format(dateFormat);
+
+        this.props.fetchOptins({ start, end });
+        this.props.fetchRecipients({ start, end });
+      } else {
+        this.props.emptyOptinsRecipients();
+      }
+    });
+  }
+
+  onSwitchChange = (switchName: TSwitchNames, newValue: boolean) => {
+    if (switchName === 'showOptins') {
+      return this.setState({ showOptins: newValue })
+    }
+
+    if (switchName === 'showRecipients') {
+      return this.setState({ showRecipients: newValue })
+    }
+  }
+
   render() {
+    const inputFormValues = {
+      dateRange: this.state.dateRange,
+      showOptins: this.state.showOptins,
+      showRecipients: this.state.showRecipients
+    };
+
     return (
       <Layout style={styles.layout}>
         <Sider
@@ -77,15 +133,15 @@ export default class DashboardApp extends React.Component <{}> {
               <Breadcrumb.Item>Reports</Breadcrumb.Item>
               <Breadcrumb.Item>Message Receipts & Optins</Breadcrumb.Item>
             </Breadcrumb>
-            <Card style={styles.cardInputForm}>
-              <InputForm/>
-            </Card>
-
-            <Card>
-              <Chart/>
-            </Card>
+            <InputForm
+              dateRange={this.state.dateRange}
+              onDateChange={this.onDateChange}
+              onSwitchChange={this.onSwitchChange}
+              {...inputFormValues}
+            />
+            <Chart {...inputFormValues}/>
           </Content>
-          <Footer style={{ textAlign: 'center' }}>ShopMessage ©2018</Footer>
+          <Footer style={styles.footer}>ShopMessage ©2018</Footer>
         </Layout>
       </Layout>
     );
@@ -96,11 +152,11 @@ const styles = {
   breadcrumb: {
     margin: '16px 0'
   },
-  cardInputForm: {
-    margin: '0 0 10px'
-  },
   content: {
     margin: '0 16px'
+  },
+  footer: {
+    textAlign: 'center' as 'center'
   },
   header: {
     background: '#fff',
@@ -111,4 +167,12 @@ const styles = {
   layout: {
     minHeight: '100vh'
   }
-}
+};
+
+const mapDispatchToProps = dispatch => ({
+  fetchOptins: dateRange => dispatch(optinsFetch(dateRange)),
+  fetchRecipients: dateRange => dispatch(recipientsFetch(dateRange)),
+  emptyOptinsRecipients: () => dispatch(optinsRecipientsEmpty())
+});
+
+export default connect(null, mapDispatchToProps)(DashboardApp);

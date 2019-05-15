@@ -1,83 +1,88 @@
-import React, { PureComponent } from 'react';
-import ChartJS from 'chart.js'
+import React from 'react';
+import { connect } from 'react-redux';
+import {
+  CartesianGrid,
+  Legend,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
+import { Card, Spin } from 'antd';
 
-export default class Chart extends PureComponent <{}> {
-  state = {
-    chart: null
-  }
-
-  async componentDidMount() {
-    const optins = await this.getOptIns()
-    const recipients = await this.getRecipients()
-
-    new ChartJS(this.refs.chart, {
-      type: 'line',
-      data: {
-          labels: optins.map(item => item.date),
-          datasets: [
-            {
-              label: 'opt-ins',
-              data: optins.map(item => item.count),
-              backgroundColor: colors.blue,
-              borderColor: colors.blue,
-              borderWidth: 1,
-              fill: false
-            },
-            {
-              label: 'recipients',
-              data: recipients.map(item => item.count),
-              backgroundColor: colors.red,
-              borderColor: colors.red,
-              borderWidth: 1,
-              fill: false
-            },
-          ]
-      }
-    });
-  }
-
-  async getOptIns() {
-    try {
-      const rawOptins = await fetch('/api/reports/optins.json?from=2018-10-01&to=2018-11-01')
-      const optins = await rawOptins.json()
-
-      return optins
-    } catch(ex) {
-      console.error(ex)
-      return null
-    }
-  }
-
-  async getRecipients() {
-    try {
-      const rawRecipients = await fetch('/api/reports/recipients.json?from=2018-10-01&to=2018-11-01')
-      const recipients = await rawRecipients.json()
-
-      return recipients
-    } catch(ex) {
-      console.error(ex)
-      return null
-    }
-  }
-
-  render() {
-    return (
-      <div style={styles.chartContainer}>
-        <canvas ref="chart"></canvas>
-      </div>
-    );
-  }
+interface IChartProps {
+  dateRange: any[],
+  isFetchingData: boolean,
+  optins: any[],
+  recipients: any[],
+  showOptins: boolean,
+  showRecipients: boolean
 }
 
-const styles = {
-  chartContainer: {
-    height: '100%',
-    position: 'relative' as 'relative',
-    width: '100%'
-  }
+const Chart = (props: IChartProps) => {
+  const {
+    optins,
+    recipients,
+    showOptins,
+    showRecipients
+  } = props
+
+  const dataNames = (optins || recipients).map(item => ({ name: item.date }))
+
+  const data = dataNames.map((name, i) => ({
+    ...name,
+    ...(optins && optins[i] && { optin: optins[i].count }),
+    ...(recipients && recipients[i] && { recipient: recipients[i].count }),
+  }));
+
+  const showChart = data.length > 0 && (showOptins || showRecipients)
+  const hasNoResults = props.dateRange.length > 0
+    && data.length === 0
+    && !props.isFetchingData
+
+  return (
+    <Spin size="large" spinning={props.isFetchingData}>
+      <Card>
+        {
+          showChart && (
+            <ResponsiveContainer height={400}>
+              <LineChart
+                width={500}
+                height={300}
+                data={data}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+
+                { showOptins && <Line type="monotone" dataKey="optin" stroke={colors.blue} /> }
+                { showRecipients && <Line type="monotone" dataKey="recipient" stroke={colors.red} /> }
+              </LineChart>
+            </ResponsiveContainer>
+          )
+        }
+
+        {
+          hasNoResults && 'No results to display'
+        }
+      </Card>
+    </Spin>
+  );
 }
 
 const colors = {
-  blue: 'rgb(54, 162, 235)',
-  red: 'rgb(255, 99, 132)'
+  blue: '#36a2eb',
+  red: '#ff6384'
 }
+
+const mapStateToProps = state => ({
+  isFetchingData: state.isFetchingData,
+  optins: state.optins,
+  recipients: state.recipients,
+});
+
+export default connect(mapStateToProps)(Chart);

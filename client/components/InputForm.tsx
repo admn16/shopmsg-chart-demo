@@ -1,5 +1,6 @@
-import React, { PureComponent } from 'react';
+import React from 'react';
 import {
+  Card,
   Col,
   DatePicker,
   Row,
@@ -8,65 +9,72 @@ import {
 
 const { RangePicker } = DatePicker
 
-interface field {
+interface IInputFormProps {
+  dateRange: any[],
+  onDateChange([object]): void,
+  onSwitchChange(string, boolean): void,
+  showOptins: boolean,
+  showRecipients: boolean
+}
+
+interface IField {
   label: string,
   input: object
 }
 
-export default class InputForm extends PureComponent <{}> {
-  onDateChange = (dateMoment, dateStr: [string, string]) => {
-    console.log(dateMoment, dateStr)
-  }
+const InputForm = (props: IInputFormProps) => {
+  const FIELDS: IField[] = [
+    {
+      label: 'Date Range',
+      input: <RangePicker onChange={props.onDateChange} value={props.dateRange} />
+    },
+    {
+      label: 'Show Optins',
+      input: 
+        <Switch
+          checked={props.showOptins}
+          defaultChecked
+          onChange={val => props.onSwitchChange('showOptins', val)}
+        />
+    },
+    {
+      label: 'Show Recipients',
+      input:
+        <Switch
+          checked={props.showRecipients}
+          defaultChecked
+          onChange={val => props.onSwitchChange('showRecipients', val)}
+        />
+    },
+  ]
 
-  onOptinsChange = (checked: boolean) => {
-    console.log(checked)
-  }
-
-  onRecipientsChange = (checked: boolean) => {
-    console.log(checked)
-  }
-
-  render() {
-    const FIELDS: field[] = [
+  return (
+    <Card style={styles.card}>
       {
-        label: 'Date Range',
-        input: <RangePicker onChange={this.onDateChange} />
-      },
-      {
-        label: 'Show Optins',
-        input: <Switch defaultChecked onChange={this.onOptinsChange} />
-      },
-      {
-        label: 'Show Recipients',
-        input: <Switch defaultChecked onChange={this.onOptinsChange} />
-      },
-    ]
-
-    return (
-      <form>
-        {
-          FIELDS.map(field => (
-            <Row 
-              gutter={16}
-              key={field.label}
-              style={styles.fieldRow}
-              type="flex"
-            >
-              <Col span={6} style={styles.labelCol}>
-                { field.label }:
-              </Col>
-              <Col span={18}>
-                { field.input }
-              </Col>
-            </Row>
-          ))
-        }
-      </form>
-    );
-  }
+        FIELDS.map(field => (
+          <Row 
+            gutter={16}
+            key={field.label}
+            style={styles.fieldRow}
+            type="flex"
+          >
+            <Col span={6} style={styles.labelCol}>
+              { field.label }:
+            </Col>
+            <Col span={18}>
+              { field.input }
+            </Col>
+          </Row>
+        ))
+      }
+    </Card>
+  );
 }
 
 const styles = {
+  card: {
+    margin: '0 0 10px'
+  },
   fieldRow: {
     alignItems: 'center',
     padding: '10px 0'
@@ -74,4 +82,6 @@ const styles = {
   labelCol: {
     textAlign: 'right' as 'right'
   }
-}
+};
+
+export default InputForm;
