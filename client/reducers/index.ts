@@ -1,4 +1,4 @@
-import * as types from '../actions/types'
+import * as types from '../actions/types';
 
 interface IAction {
   type: string,
@@ -28,13 +28,26 @@ export default function(state = defaultState, action: IAction) {
       return {
         ...state,
         optins: action.optins
-      }
+      };
 
     case types.RECIPIENTS_FETCH_SUCCESS:
       return {
         ...state,
         recipients: action.recipients
-      }
+      };
+
+    case types.OPTINS_RECIPIENTS_EMPTY:
+      return {
+        ...state,
+        optins: [],
+        recipients: []
+      };
+
+    case types.FETCHING_DATA:
+      return {
+        ...state,
+        isFetchingData: action.fetching
+      };
 
     default:
       return state
