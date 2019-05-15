@@ -44,9 +44,9 @@ const Chart = (props: IChartProps) => {
 
   return (
     <Spin size="large" spinning={props.isFetchingData}>
-      <Card>
-        {
-          showChart && (
+      {
+        showChart && (
+          <Card>
             <ResponsiveContainer height={400}>
               <LineChart
                 width={500}
@@ -63,13 +63,12 @@ const Chart = (props: IChartProps) => {
                 { showRecipients && <Line type="monotone" dataKey="recipient" stroke={colors.red} /> }
               </LineChart>
             </ResponsiveContainer>
-          )
-        }
-
-        {
-          hasNoResults && 'No results to display'
-        }
-      </Card>
+          </Card>
+        )
+      }
+      {
+        hasNoResults && <Card><strong>No results to display</strong></Card>
+      }
     </Spin>
   );
 }
