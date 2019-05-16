@@ -45,6 +45,9 @@ const Chart = (props: IChartProps) => {
   return (
     <Spin spinning={props.isFetchingData}>
       {
+        (props.isFetchingData && !showChart) && <Card/>
+      }
+      {
         showChart && (
           <Card>
             <ResponsiveContainer height={400}>
